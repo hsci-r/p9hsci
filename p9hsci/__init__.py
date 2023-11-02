@@ -76,6 +76,9 @@ class scale_colour_coloropt(p9.scales.scale.scale_discrete):
 class scale_fill_coloropt(scale_colour_coloropt):
     _aesthetics = ["fill"]
 
+class scale_coloropt(scale_colour_coloropt):
+    _aesthetics = ["color", "fill"]
+
 scale_color_coloropt = scale_colour_coloropt
 
 class scale_colour_viridis_c(p9.scale_color_cmap):
@@ -85,34 +88,43 @@ class scale_colour_viridis_c(p9.scale_color_cmap):
 
 scale_color_viridis_c = scale_colour_viridis_c
 
+class scale_fill_viridis_c(scale_colour_viridis_c):
+    _aesthetics = ["fill"]
+
 class theme_hsci_discrete(theme_hsci):
     
     def __init__(self, base_size=12, base_family="sans", palette="normal"):
         """HSCI plotnine theme with an associated default discrete colour scale"""
         super().__init__(base_size, base_family)
-        self.scale = scale_colour_coloropt(option=palette)
+        self.option=option
 
     @overload
     def __radd__(self, other: p9.ggplot) -> p9.ggplot:
         ...
 
-    def __radd__(self, other: p9.theme | p9.ggplot) -> p9.theme | p9.ggplot:
-        other.scales.append(copy(self.scale))
+    def __radd__(self, other: p9.ggplot) -> p9.ggplot:
+        if 'color' in other.mapping:
+            other.scales.append(scale_colour_coloropt(option=self.option))
+        if 'fill' in other.mapping:
+            other.scales.append(scale_fill_coloropt(option=self.option))
         return super().__radd__(other)
 
 class theme_hsci_continuous(theme_hsci):
     def __init__(self, base_size=12, base_family="sans", palette="viridis"):
         """HSCI plotnine theme with an associated default continuous colour scale"""
         super().__init__(base_size, base_family)
-        self.scale = scale_colour_viridis_c(option=palette)
+        self.option=palette
 
     @overload
     def __radd__(self, other: p9.ggplot) -> p9.ggplot:
         ...
 
-    def __radd__(self, other: p9.theme | p9.ggplot) -> p9.theme | p9.ggplot:
-        other.scales.append(copy(self.scale))
+    def __radd__(self, other: p9.ggplot) -> p9.ggplot:
+        if 'color' in other.mapping:
+            other.scales.append(scale_colour_viridis_c(option=self.option))
+        if 'fill' in other.mapping:
+            other.scales.append(scale_fill_viridis_c(option=self.option))
         return super().__radd__(other)
 
 
-__all__ = ["theme_hsci", "coloropt_palettes", "scale_colour_coloropt", "scale_fill_coloropt", "scale_colour_viridis_c"]
+__all__ = ["theme_hsci", "coloropt_palettes", "scale_colour_coloropt", "scale_fill_coloropt", "scale_coloropt", "scale_colour_viridis_c", "scale_fill_viridis_c", "theme_hsci_continuous", "theme_hsci_discrete"]

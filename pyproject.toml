@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "p9hsci"
-version = "0.1.0"
+version = "0.1.1"
 description = "HSCI theme for plotnine"
 authors = ["Eetu Mäkelä <eetu.makela@iki.fi>"]
 license = "MIT"
